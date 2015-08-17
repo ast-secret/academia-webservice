@@ -1,0 +1,86 @@
+<?php
+namespace App\Test\TestCase\Model\Table;
+
+use App\Model\Table\SuggestionsTable;
+use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
+
+/**
+ * App\Model\Table\SuggestionsTable Test Case
+ */
+class SuggestionsTableTest extends TestCase
+{
+
+    /**
+     * Fixtures
+     *
+     * @var array
+     */
+    public $fixtures = [
+        'app.suggestions',
+        'app.gyms',
+        'app.customers',
+        'app.cards',
+        'app.users',
+        'app.exercises',
+        'app.machines',
+        'app.phones',
+        'app.rooms',
+        'app.services',
+        'app.times'
+    ];
+
+    /**
+     * setUp method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $config = TableRegistry::exists('Suggestions') ? [] : ['className' => 'App\Model\Table\SuggestionsTable'];
+        $this->Suggestions = TableRegistry::get('Suggestions', $config);
+    }
+
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->Suggestions);
+
+        parent::tearDown();
+    }
+
+    /**
+     * Test initialize method
+     *
+     * @return void
+     */
+    public function testInitialize()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test validationDefault method
+     *
+     * @return void
+     */
+    public function testValidationDefault()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test buildRules method
+     *
+     * @return void
+     */
+    public function testBuildRules()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+}
