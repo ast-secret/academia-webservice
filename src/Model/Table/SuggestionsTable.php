@@ -10,7 +10,6 @@ use Cake\Validation\Validator;
 /**
  * Suggestions Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Gyms
  * @property \Cake\ORM\Association\BelongsTo $Customers
  */
 class SuggestionsTable extends Table
@@ -30,10 +29,7 @@ class SuggestionsTable extends Table
         $this->displayField('id');
         $this->primaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->belongsTo('Gyms', [
-            'foreignKey' => 'gym_id',
-            'joinType' => 'INNER'
-        ]);
+
         $this->belongsTo('Customers', [
             'foreignKey' => 'customer_id',
             'joinType' => 'INNER'
@@ -56,16 +52,6 @@ class SuggestionsTable extends Table
             ->requirePresence('text', 'create')
             ->notEmpty('text');
 
-        $validator
-            ->add('is_read', 'valid', ['rule' => 'boolean'])
-            ->requirePresence('is_read', 'create')
-            ->notEmpty('is_read');
-
-        $validator
-            ->add('is_star', 'valid', ['rule' => 'boolean'])
-            ->requirePresence('is_star', 'create')
-            ->notEmpty('is_star');
-
         return $validator;
     }
 
@@ -78,7 +64,6 @@ class SuggestionsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['gym_id'], 'Gyms'));
         $rules->add($rules->existsIn(['customer_id'], 'Customers'));
         return $rules;
     }

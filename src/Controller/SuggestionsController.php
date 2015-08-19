@@ -10,37 +10,6 @@ use App\Controller\AppController;
  */
 class SuggestionsController extends AppController
 {
-
-    /**
-     * Index method
-     *
-     * @return void
-     */
-    public function index()
-    {
-        $this->paginate = [
-            'contain' => ['Gyms', 'Customers']
-        ];
-        $this->set('suggestions', $this->paginate($this->Suggestions));
-        $this->set('_serialize', ['suggestions']);
-    }
-
-    /**
-     * View method
-     *
-     * @param string|null $id Suggestion id.
-     * @return void
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $suggestion = $this->Suggestions->get($id, [
-            'contain' => ['Gyms', 'Customers']
-        ]);
-        $this->set('suggestion', $suggestion);
-        $this->set('_serialize', ['suggestion']);
-    }
-
     /**
      * Add method
      *
@@ -48,65 +17,22 @@ class SuggestionsController extends AppController
      */
     public function add()
     {
+        $id = 3;
+
         $suggestion = $this->Suggestions->newEntity();
         if ($this->request->is('post')) {
+
+            $this->request->data['customer_id'] = $id;
+
             $suggestion = $this->Suggestions->patchEntity($suggestion, $this->request->data);
             if ($this->Suggestions->save($suggestion)) {
-                $this->Flash->success(__('The suggestion has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                $message = "A sugestão foi salva.";
             } else {
-                $this->Flash->error(__('The suggestion could not be saved. Please, try again.'));
+                $message = "A mensagem não pode ser salva.";
             }
         }
-        $gyms = $this->Suggestions->Gyms->find('list', ['limit' => 200]);
-        $customers = $this->Suggestions->Customers->find('list', ['limit' => 200]);
-        $this->set(compact('suggestion', 'gyms', 'customers'));
-        $this->set('_serialize', ['suggestion']);
-    }
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Suggestion id.
-     * @return void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $suggestion = $this->Suggestions->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $suggestion = $this->Suggestions->patchEntity($suggestion, $this->request->data);
-            if ($this->Suggestions->save($suggestion)) {
-                $this->Flash->success(__('The suggestion has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The suggestion could not be saved. Please, try again.'));
-            }
-        }
-        $gyms = $this->Suggestions->Gyms->find('list', ['limit' => 200]);
-        $customers = $this->Suggestions->Customers->find('list', ['limit' => 200]);
-        $this->set(compact('suggestion', 'gyms', 'customers'));
-        $this->set('_serialize', ['suggestion']);
-    }
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Suggestion id.
-     * @return void Redirects to index.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $suggestion = $this->Suggestions->get($id);
-        if ($this->Suggestions->delete($suggestion)) {
-            $this->Flash->success(__('The suggestion has been deleted.'));
-        } else {
-            $this->Flash->error(__('The suggestion could not be deleted. Please, try again.'));
-        }
-        return $this->redirect(['action' => 'index']);
+        $this->set(compact('message'));
+        $this->set('_serialize', ['message']);
     }
 }
