@@ -3,6 +3,8 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 
+use Cake\Collection\Collection;
+
 /**
  * Services Controller
  *
@@ -18,93 +20,33 @@ class ServicesController extends AppController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Gyms']
-        ];
-        $this->set('services', $this->paginate($this->Services));
-        $this->set('_serialize', ['services']);
-    }
+        $gymId = 1;
 
-    /**
-     * View method
-     *
-     * @param string|null $id Service id.
-     * @return void
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $service = $this->Services->get($id, [
-            'contain' => ['Gyms', 'Times']
+        $releases = $this->Services->find('all', [
+            'fields' => [
+                'Services.id',
+                'Services.name',
+                'Services.duration',
+                'Services.description'
+            ],
+            'conditions' => [
+                'Services.is_active' => true
+            ],
+            'contain' => [
+                'Times' => function($q){
+                    return $q->select(['service_id', 'weekday', 'start_hour']);
+                }
+            ],
+            'limit' => 20,
+            'order' => ['Services.name' => 'DESC']
         ]);
-        $this->set('service', $service);
-        $this->set('_serialize', ['service']);
-    }
 
-    /**
-     * Add method
-     *
-     * @return void Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $service = $this->Services->newEntity();
-        if ($this->request->is('post')) {
-            $service = $this->Services->patchEntity($service, $this->request->data);
-            if ($this->Services->save($service)) {
-                $this->Flash->success(__('The service has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The service could not be saved. Please, try again.'));
-            }
-        }
-        $gyms = $this->Services->Gyms->find('list', ['limit' => 200]);
-        $this->set(compact('service', 'gyms'));
-        $this->set('_serialize', ['service']);
-    }
+        $releases = $releases->map(function($value){
+            $value->times = (new Collection($value->times))->groupBy('weekday');
+            return $value;
+        });
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Service id.
-     * @return void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $service = $this->Services->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $service = $this->Services->patchEntity($service, $this->request->data);
-            if ($this->Services->save($service)) {
-                $this->Flash->success(__('The service has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The service could not be saved. Please, try again.'));
-            }
-        }
-        $gyms = $this->Services->Gyms->find('list', ['limit' => 200]);
-        $this->set(compact('service', 'gyms'));
-        $this->set('_serialize', ['service']);
-    }
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Service id.
-     * @return void Redirects to index.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $service = $this->Services->get($id);
-        if ($this->Services->delete($service)) {
-            $this->Flash->success(__('The service has been deleted.'));
-        } else {
-            $this->Flash->error(__('The service could not be deleted. Please, try again.'));
-        }
-        return $this->redirect(['action' => 'index']);
+        $this->set('releases', $releases);
+        $this->set('_serialize', ['releases']);
     }
 }
