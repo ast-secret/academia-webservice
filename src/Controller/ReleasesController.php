@@ -21,6 +21,11 @@ class ReleasesController extends AppController
         $gymId = 1;
 
         $releases = $this->Releases->find('all', [
+            'fields' => [
+                'Releases.title',
+                'Releases.text',
+                'Releases.created',
+            ],
             'conditions' => [
                 'Releases.is_active' => true
             ],

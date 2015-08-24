@@ -30,7 +30,8 @@ class ServicesController extends AppController
                 'Services.description'
             ],
             'conditions' => [
-                'Services.is_active' => true
+                'Services.is_active' => true,
+                'Services.gym_id' => $gymId
             ],
             'contain' => [
                 'Times' => function($q){
