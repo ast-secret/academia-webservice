@@ -24,7 +24,7 @@ class TimesController extends AppController
         $times = $this->Times->find('all', [
             'contain' => [
                 'Services' => function($q){
-                    return $q->where(['gym_id' => 1]);
+                    return $q->where(['gym_id' => 1, 'is_active' => true]);
                 }
             ],
             //'order' => ['Times.weekday', 'Times.start_hour']
