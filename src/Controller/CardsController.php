@@ -21,12 +21,17 @@ class CardsController extends AppController
                 'obs',
                 'id',
                 'end_date',
+                'user_id'
             ],
             'conditions' => [
                 'customer_id' => $customer->id,
                 'end_date >' => (new Datetime)->format('Y-m-d H:i:s')
             ],
             'contain' => [
+                'Users' => function($q){
+                    return $q
+                        ->select(['id', 'name']);
+                },
                 'Exercises' => function($q){
                     return $q
                         ->select(['card_id', 'name', 'exercise_column']);
@@ -34,11 +39,13 @@ class CardsController extends AppController
             ]
         ])->first();
 
-        $exercises = $card->exercises;
-        unset($card->exercises);
-        $exercises = (new Collection($exercises))->groupBy('exercise_column');
+        if ($card) {
+            $exercises = $card->exercises;
+            unset($card->exercises);
+            $exercises = (new Collection($exercises))->groupBy('exercise_column');
 
-        $card->exercises = $exercises;
+            $card->exercises = $exercises;
+        }
 
         $this->set(compact('card'));
         $this->set('_serialize', ['card']);
