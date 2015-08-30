@@ -13,7 +13,8 @@ class CardsController extends AppController
 {
     public function index()
     {
-        $customer = $this->Cards->Customers->get(1);
+        $userId = $this->Auth->user('id');
+        $customer = $this->Cards->Customers->get($userId);
 
         $card = $this->Cards->find('all', [
             'fields' => [

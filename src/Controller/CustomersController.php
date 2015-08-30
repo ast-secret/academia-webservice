@@ -19,7 +19,7 @@ class CustomersController extends AppController
     public function BeforeFilter(Event $event)
     {
         parent::BeforeFilter($event);
-        $this->Auth->allow(['add', 'login']);
+        $this->Auth->allow(['add', 'createToken']);
     }
 
     public function add()
@@ -46,9 +46,8 @@ class CustomersController extends AppController
         $this->set(compact('message'));
         $this->set('_serialize', ['message']);
     }
-    public function login()
+    public function createToken()
     {
-
         $customer = $this->Auth->identify();
 
         if (!$customer) {
@@ -71,12 +70,11 @@ class CustomersController extends AppController
         }
 
         $this->set([
-            'customer' => $customer,
-            'success' => true,
-            'data' => [
-                'token' => JWT::encode($customer, Security::salt())
+            'message' => [
+                'user' => ['name' => $customerUpdate->name],
+                'token' => JWT::encode($customerUpdate, Security::salt())
             ]
         ]);
-        $this->set('_serialize', ['success', 'data', 'customer']);
+        $this->set('_serialize', ['message']);
     }
 }

@@ -18,7 +18,7 @@ class ReleasesController extends AppController
      */
     public function index()
     {
-        $gymId = 1;
+        $gymId = $this->Auth->user('gym_id');
 
         $releases = $this->Releases->find('all', [
             'fields' => [

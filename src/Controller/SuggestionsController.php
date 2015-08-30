@@ -17,12 +17,12 @@ class SuggestionsController extends AppController
      */
     public function add()
     {
-        $id = 3;
+        $userId = $this->Auth->user('id');
 
         $suggestion = $this->Suggestions->newEntity();
         if ($this->request->is('post')) {
 
-            $this->request->data['customer_id'] = $id;
+            $this->request->data['customer_id'] = $userId;
 
             $suggestion = $this->Suggestions->patchEntity($suggestion, $this->request->data);
             if ($this->Suggestions->save($suggestion)) {
