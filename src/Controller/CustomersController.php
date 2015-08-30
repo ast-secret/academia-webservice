@@ -3,6 +3,12 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 
+use Cake\Event\Event;
+use Cake\Network\Exception\UnauthorizedException;
+use Cake\Utility\Security;
+use Exception;
+use JWT;
+
 /**
  * Customers Controller
  *
@@ -10,101 +16,67 @@ use App\Controller\AppController;
  */
 class CustomersController extends AppController
 {
-
-    /**
-     * Index method
-     *
-     * @return void
-     */
-    public function index()
+    public function BeforeFilter(Event $event)
     {
-        $this->paginate = [
-            'contain' => ['Gyms']
-        ];
-        $this->set('customers', $this->paginate($this->Customers));
-        $this->set('_serialize', ['customers']);
+        parent::BeforeFilter($event);
+        $this->Auth->allow(['add', 'login']);
     }
 
-    /**
-     * View method
-     *
-     * @param string|null $id Customer id.
-     * @return void
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $customer = $this->Customers->get($id, [
-            'contain' => ['Gyms', 'Cards', 'Suggestions']
-        ]);
-        $this->set('customer', $customer);
-        $this->set('_serialize', ['customer']);
-    }
-
-    /**
-     * Add method
-     *
-     * @return void Redirects on successful add, renders view otherwise.
-     */
     public function add()
     {
+        $message = '';
+
+        $data = [
+            'email' => 'jonas@gmail.com',
+            'gym_id' => 1,
+            'registration' => '123',
+            'name' => 'Daniel Pedro',
+            'password' => '123mudar',
+            'is_active' => true
+        ];
         $customer = $this->Customers->newEntity();
-        if ($this->request->is('post')) {
-            $customer = $this->Customers->patchEntity($customer, $this->request->data);
-            if ($this->Customers->save($customer)) {
-                $this->Flash->success(__('The customer has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The customer could not be saved. Please, try again.'));
-            }
-        }
-        $gyms = $this->Customers->Gyms->find('list', ['limit' => 200]);
-        $this->set(compact('customer', 'gyms'));
-        $this->set('_serialize', ['customer']);
-    }
+        $customer = $this->Customers->patchEntity($customer, $data);
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Customer id.
-     * @return void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function edit($id = null)
+        if (!$this->Customers->save($customer)) {
+            $message = $customer->errors();
+        }
+
+        $token = JWT::encode(['id' => 1, 'exp' => time() + 609223], Security::salt());
+
+        $this->set(compact('message'));
+        $this->set('_serialize', ['message']);
+    }
+    public function login()
     {
-        $customer = $this->Customers->get($id, [
-            'contain' => []
+
+        $customer = $this->Auth->identify();
+
+        if (!$customer) {
+            throw new UnauthorizedException('Invalid username or password');
+        }
+        $this->Auth->setUser($customer);
+        
+        $pushRegid = $this->request->data('push_reg_id');
+        $platform = $this->request->data('platform');
+
+        if (!$this->request->data('push_reg_id')) {
+            throw new Exception("Você deve informar o push_reg_id");
+        }
+
+        $customerUpdate = $this->Customers->get($this->Auth->user('id'));
+        $customerUpdate = $this->Customers->patchEntity($customerUpdate, $this->request->data);
+
+        if (!$this->Customers->save($customerUpdate)) {
+            throw new Exception("Ocorreu um erro ao efetuar o login");   
+        }
+
+        $this->set([
+            'customer' => $customer,
+            'success' => true,
+            'data' => [
+                'token' => JWT::encode($customer, Security::salt())
+            ]
         ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $customer = $this->Customers->patchEntity($customer, $this->request->data);
-            if ($this->Customers->save($customer)) {
-                $this->Flash->success(__('The customer has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The customer could not be saved. Please, try again.'));
-            }
-        }
-        $gyms = $this->Customers->Gyms->find('list', ['limit' => 200]);
-        $this->set(compact('customer', 'gyms'));
-        $this->set('_serialize', ['customer']);
-    }
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Customer id.
-     * @return void Redirects to index.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $customer = $this->Customers->get($id);
-        if ($this->Customers->delete($customer)) {
-            $this->Flash->success(__('The customer has been deleted.'));
-        } else {
-            $this->Flash->error(__('The customer could not be deleted. Please, try again.'));
-        }
-        return $this->redirect(['action' => 'index']);
+        $this->set('_serialize', ['success', 'data', 'customer']);
     }
 }

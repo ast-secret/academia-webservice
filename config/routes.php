@@ -52,10 +52,12 @@ Router::scope('/', function ($routes) {
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
      */
-    $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+    //$routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
 
     $routes->extensions(['json']);
     $routes->resources('Releases');
+    $routes->resources('Times');
+    $routes->resources('Customers');
 
     /**
      * Connect catchall routes for all controllers.

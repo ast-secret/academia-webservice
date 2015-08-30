@@ -4,6 +4,9 @@ namespace App\Controller;
 use App\Controller\AppController;
 
 use Cake\Collection\Collection;
+use Cake\Event\Event;       
+
+use Cake\Network\Exception\UnauthorizedException;
 
 /**
  * Times Controller
@@ -13,6 +16,12 @@ use Cake\Collection\Collection;
 class TimesController extends AppController
 {
 
+    // public function beforeFilter(Event $event)
+    // {
+    //     parent::beforeFilter($event);
+    //     $this->Auth->allow(['index']);
+    // }
+
     /**
      * Index method
      *
@@ -20,19 +29,20 @@ class TimesController extends AppController
      */
     public function index()
     {
-
+        $user = $this->Auth->user();
         $times = $this->Times->find('all', [
             'contain' => [
                 'Services' => function($q){
-                    return $q->where(['gym_id' => 1, 'is_active' => true]);
+                    return $q
+                        ->select(['id', 'name'])
+                        ->where(['gym_id' => 1, 'is_active' => true]);
                 }
             ],
-            //'order' => ['Times.weekday', 'Times.start_hour']
         ]);
 
         $times = $times->groupBy('weekday');
 
-        $this->set('times', $times);
+        $this->set(compact('times'));
         $this->set('_serialize', ['times']);
     }
 }

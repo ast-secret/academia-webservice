@@ -16,6 +16,10 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 
+use Cake\Event\Event;
+
+use Cake\Network\Exception\UnauthorizedException;
+
 /**
  * Application Controller
  *
@@ -56,7 +60,26 @@ class AppController extends Controller
         }
 
         parent::initialize();
-        $this->loadComponent('Flash');
+
         $this->loadComponent('RequestHandler');
+
+        $this->loadComponent('Auth', [
+            'authenticate' => [
+                'Form' => [
+                    'userModel' => 'Customers',
+                    'scope' => ['is_active' => true],
+                    'fields' => [
+                        'username' => 'email'
+                    ]
+                ],
+                'ADmad/JwtAuth.Jwt' => [
+                    'parameter' => '_token',
+                    'userModel' => 'Customers',
+                ],
+
+            ],
+        ]);
+
     }
+
 }

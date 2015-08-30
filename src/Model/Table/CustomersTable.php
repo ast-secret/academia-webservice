@@ -80,6 +80,13 @@ class CustomersTable extends Table
             ->requirePresence('email', 'create')
             ->notEmpty('email');
 
+        $validator
+            ->add('platform', 'custom', [
+                'rule' => function($value){
+                    return in_array($value, ['android', 'ios']);
+                }
+            ]);
+
         return $validator;
     }
 

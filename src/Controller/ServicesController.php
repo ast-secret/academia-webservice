@@ -22,12 +22,13 @@ class ServicesController extends AppController
     {
         $gymId = 1;
 
-        $releases = $this->Services->find('all', [
+        $services = $this->Services->find('all', [
             'fields' => [
                 'Services.id',
                 'Services.name',
                 'Services.duration',
-                'Services.description'
+                'Services.description',
+                'Services.gasto_calorico',
             ],
             'conditions' => [
                 'Services.is_active' => true,
@@ -42,12 +43,12 @@ class ServicesController extends AppController
             'order' => ['Services.name' => 'DESC']
         ]);
 
-        $releases = $releases->map(function($value){
+        $services = $services->map(function($value){
             $value->times = (new Collection($value->times))->groupBy('weekday');
             return $value;
         });
 
-        $this->set('releases', $releases);
-        $this->set('_serialize', ['releases']);
+        $this->set('services', $services);
+        $this->set('_serialize', ['services']);
     }
 }
