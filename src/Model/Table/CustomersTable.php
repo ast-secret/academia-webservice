@@ -6,6 +6,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Auth\DefaultPasswordHasher;
 
 /**
  * Customers Model
@@ -63,10 +64,19 @@ class CustomersTable extends Table
             ->requirePresence('registration', 'create')
             ->notEmpty('registration');
 
+        $minLength = 5;
+        $maxLength = 24;
         $validator
             ->requirePresence('password', 'create')
-            ->notEmpty('password');
-
+            ->notEmpty('password')
+            ->add('password', 'maxLength', [
+                'rule' => ['maxLength', $maxLength],
+                'message' => 'A senha deve conter no máximo '.$maxLength.' caracteres'
+            ])
+            ->add('password', 'minLength', [
+                'rule' => ['minLength', $minLength],
+                'message' => 'A senha deve conter no mínimo '.$minLength.' caracteres'
+            ]);
         $validator
             ->add('is_active', 'valid', ['rule' => 'boolean'])
             ->requirePresence('is_active', 'create')

@@ -17,7 +17,7 @@ class Customer extends Entity
      */
     protected $_accessible = [
         '*' => true,
-        'id' => false,
+        'id' => false
     ];
 
 	protected function _setPassword($password)

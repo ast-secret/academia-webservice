@@ -6,8 +6,10 @@ use App\Controller\AppController;
 use Cake\Event\Event;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Utility\Security;
-use Exception;
+use Cake\Network\Exception\BadRequestException;
 use JWT;
+
+use Cake\Auth\DefaultPasswordHasher;
 
 /**
  * Customers Controller
@@ -54,7 +56,7 @@ class CustomersController extends AppController
             throw new UnauthorizedException('Invalid username or password');
         }
         $this->Auth->setUser($customer);
-        
+
         $pushRegid = $this->request->data('push_reg_id');
         $platform = $this->request->data('platform');
 
@@ -63,10 +65,13 @@ class CustomersController extends AppController
         }
 
         $customerUpdate = $this->Customers->get($this->Auth->user('id'));
-        $customerUpdate = $this->Customers->patchEntity($customerUpdate, $this->request->data);
+        $customerUpdate = $this->Customers->patchEntity($customerUpdate,
+          $this->request->data,
+          ['fieldList' => ['platform', 'push_reg_id']]
+        );
 
         if (!$this->Customers->save($customerUpdate)) {
-            throw new Exception("Ocorreu um erro ao efetuar o login");   
+            throw new Exception(json_encode($customerUpdate->errors()));
         }
 
         $this->set([
@@ -76,5 +81,32 @@ class CustomersController extends AppController
             ]
         ]);
         $this->set('_serialize', ['message']);
+    }
+
+    public function changePassword()
+    {
+        $idCustomer = $this->Auth->user('id');
+
+        $customer = $this->Customers->get($idCustomer);
+
+        if ($this->request->data('password') != $this->request->data('confirm_new_password')) {
+          throw new BadRequestException("Você não confirmou a sua nova senha corretamente");
+
+        }
+        if (!(new DefaultPasswordHasher)->check($this->request->data('current_password'), $customer->password)) {
+          throw new BadRequestException("Você não confirmou a sua senha atual corretamente");
+
+        }
+        $customer = $this->Customers->patchEntity($customer,
+          $this->request->data,
+          ['fieldList' => ['password']]
+        );
+
+        if (!$this->Customers->save($customer)) {
+          throw new BadRequestException("Ocorreu um erro ao alterar a sua senha");
+
+        }
+        $this->set(['message' => 'Senha alterada', 'code' => 200]);
+        $this->set('_serialize', ['message',' code']);
     }
 }

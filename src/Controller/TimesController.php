@@ -26,7 +26,7 @@ class TimesController extends AppController
             'contain' => [
                 'Services' => function($q) use ($gymId){
                     return $q
-                        ->select(['id', 'name'])
+                        ->select(['id', 'name', 'duration', 'gasto_calorico'])
                         ->where(['gym_id' => $gymId, 'is_active' => true]);
                 }
             ],
