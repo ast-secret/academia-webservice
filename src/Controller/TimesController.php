@@ -20,9 +20,9 @@ class TimesController extends AppController
     public function index()
     {
         $gymId = $this->Auth->user('gym_id');
-        
-        $user = $this->Auth->user();
+
         $times = $this->Times->find('all', [
+            'order' => 'Times.start_hour',
             'contain' => [
                 'Services' => function($q) use ($gymId){
                     return $q

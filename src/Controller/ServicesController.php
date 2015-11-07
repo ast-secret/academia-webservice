@@ -20,7 +20,7 @@ class ServicesController extends AppController
      */
     public function index()
     {
-        $gymId = 1;
+        $gymId = $this->Auth->user('gym_id');
 
         $services = $this->Services->find('all', [
             'fields' => [

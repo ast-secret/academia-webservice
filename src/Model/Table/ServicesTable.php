@@ -68,6 +68,10 @@ class ServicesTable extends Table
             ->add('duration', 'valid', ['rule' => 'numeric'])
             ->requirePresence('duration', 'create')
             ->notEmpty('duration');
+        $validator
+            ->add('gasto_calorico', 'valid', ['rule' => 'numeric'])
+            ->requirePresence('gasto_calorico', 'create')
+            ->notEmpty('gasto_calorico');
 
         return $validator;
     }

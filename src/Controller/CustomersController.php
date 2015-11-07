@@ -11,6 +11,8 @@ use JWT;
 
 use Cake\Auth\DefaultPasswordHasher;
 
+use Exception;
+
 /**
  * Customers Controller
  *
