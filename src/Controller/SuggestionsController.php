@@ -20,6 +20,7 @@ class SuggestionsController extends AppController
         $userId = $this->Auth->user('id');
 
         $suggestion = $this->Suggestions->newEntity();
+
         if ($this->request->is('post')) {
 
             $this->request->data['customer_id'] = $userId;

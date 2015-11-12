@@ -3,6 +3,8 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 
+use Cake\Collection\Collection;
+
 /**
  * Releases Controller
  *
@@ -24,10 +26,11 @@ class ReleasesController extends AppController
             'fields' => [
                 'Releases.title',
                 'Releases.text',
+                'Releases.destaque',
                 'Releases.created',
             ],
             'conditions' => [
-                'Releases.is_active' => true
+                'Releases.is_active' => true,
             ],
             'contain' => [
                 'Users' => function($q) use ($gymId){
@@ -38,7 +41,10 @@ class ReleasesController extends AppController
             'limit' => 20,
             'order' => ['Releases.created' => 'DESC']
         ]);
-        $this->set('releases', $releases);
-        $this->set('_serialize', ['releases']);
+
+        $releasesByDestaque = $releases->groupBy('destaque');
+
+        $this->set(compact('releasesByDestaque'));
+        $this->set('_serialize', ['releasesByDestaque']);
     }
 }
