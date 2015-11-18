@@ -46,8 +46,6 @@ class AppController extends Controller
             header('Access-Control-Allow-Credentials: true');
             header('Access-Control-Max-Age: 86400');    // cache for 1 day
         }
-
-        // Access-Control headers are received during OPTIONS requests
         if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
             if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
@@ -65,6 +63,8 @@ class AppController extends Controller
         $this->loadComponent('Flash');
 
         $this->loadComponent('Auth', [
+            'storage' => 'Memory',
+            'authorize' => 'Controller',
             'authenticate' => [
                 'Form' => [
                     'userModel' => 'Customers',
@@ -80,11 +80,25 @@ class AppController extends Controller
                 'ADmad/JwtAuth.Jwt' => [
                     'parameter' => '_token',
                     'userModel' => 'Customers',
+                    'scope' => [
+                        'is_active' => 1,
+                        'deleted' => 0
+                    ],
                 ],
-
             ],
+            'unauthorizedRedirect' => false,
+            // 'checkAuthIn' => 'Controller.initialize',
         ]);
 
+    }
+
+    public function beforeFilter(Event $event)
+    {
+    }
+
+    public function isAuthorized($user = null)
+    {
+        return true;
     }
 
 }

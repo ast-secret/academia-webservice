@@ -1,0 +1,5 @@
+{
+    "require": {
+        "snelg/cakephp-cors": "dev-master"
+    }
+}

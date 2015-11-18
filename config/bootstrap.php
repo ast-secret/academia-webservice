@@ -194,6 +194,7 @@ if (Configure::read('debug')) {
 DispatcherFactory::add('Asset');
 DispatcherFactory::add('Routing');
 DispatcherFactory::add('ControllerFactory');
+// DispatcherFactory::add('Cors.Cors', ['routes' => 'RegidsController']);
 
 /**
  * Enable default locale format parsing.

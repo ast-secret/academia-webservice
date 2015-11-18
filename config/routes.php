@@ -49,6 +49,10 @@ Router::scope('/customers', function ($routes) {
     $routes->extensions(['json']);
     $routes->connect('/change-password', ['controller' => 'Customers', 'action' => 'changePassword']);
 });
+Router::scope('/regid', function ($routes) {
+    $routes->extensions(['json']);
+    $routes->connect('/add', ['controller' => 'Regids', 'action' => 'add']);
+});
 Router::scope('/', function ($routes) {
     /**
      * Here, we are connecting '/' (base path) to a controller called 'Pages',

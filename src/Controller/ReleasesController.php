@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 
 use Cake\Collection\Collection;
+use Cake\Event\Event;
 
 /**
  * Releases Controller
@@ -12,6 +13,11 @@ use Cake\Collection\Collection;
  */
 class ReleasesController extends AppController
 {
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+        $this->Auth->allow('index');
+    }
 
     /**
      * Index method
@@ -20,7 +26,7 @@ class ReleasesController extends AppController
      */
     public function index()
     {
-        $gymId = $this->Auth->user('gym_id');
+        $gymId = (int)$this->request->query('gym_id');
 
         $releases = $this->Releases->find('all', [
             'fields' => [

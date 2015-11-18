@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 
 use Cake\Collection\Collection;
+use Cake\Event\Event;
 
 /**
  * Times Controller
@@ -12,6 +13,11 @@ use Cake\Collection\Collection;
  */
 class TimesController extends AppController
 {
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+        $this->Auth->allow('index');
+    }
     /**
      * Index method
      *
@@ -19,7 +25,7 @@ class TimesController extends AppController
      */
     public function index()
     {
-        $gymId = $this->Auth->user('gym_id');
+        $gymId = (int)$this->request->query('gym_id');
 
         $times = $this->Times->find('all', [
             'order' => 'Times.start_hour',

@@ -66,7 +66,10 @@ class CustomersController extends AppController
             throw new Exception("Você deve informar o push_reg_id");
         }
 
-        $customerUpdate = $this->Customers->get($this->Auth->user('id'));
+        $customerUpdate = $this->Customers->get($this->Auth->user('id'), [
+            'fields' => ['id', 'name', 'email', 'gym_id']
+        ]);
+
         $customerUpdate = $this->Customers->patchEntity($customerUpdate,
           $this->request->data,
           ['fieldList' => ['platform', 'push_reg_id']]

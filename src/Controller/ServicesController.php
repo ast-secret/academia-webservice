@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 
 use Cake\Collection\Collection;
+use Cake\Event\Event;
 
 /**
  * Services Controller
@@ -13,6 +14,12 @@ use Cake\Collection\Collection;
 class ServicesController extends AppController
 {
 
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+        $this->Auth->allow('index');
+    }
+
     /**
      * Index method
      *
@@ -20,7 +27,7 @@ class ServicesController extends AppController
      */
     public function index()
     {
-        $gymId = $this->Auth->user('gym_id');
+        $gymId = (int)$this->request->query('gym_id');
 
         $services = $this->Services->find('all', [
             'fields' => [
