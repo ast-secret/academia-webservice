@@ -5,13 +5,11 @@ use App\Controller\AppController;
 
 use Cake\Event\Event;
 use Cake\Network\Exception\UnauthorizedException;
-use Cake\Utility\Security;
 use Cake\Network\Exception\BadRequestException;
-use Firebase\JWT\JWT;
-
 use Cake\Auth\DefaultPasswordHasher;
+use Cake\Utility\Security;
 
-use Exception;
+use Firebase\JWT\JWT;
 
 /**
  * Customers Controller
@@ -52,37 +50,33 @@ class CustomersController extends AppController
     }
     public function createToken()
     {
-        $customer = $this->Auth->identify();
+        $customer = $this->Customers->find('all', [
+            'fields' => [
+                'id',
+                'email',
+                'name',
+                'password'
+            ],
+            'conditions' => [
+                'email' => $this->request->data('email'),
+                'gym_id' => $this->request->query('gym_id'), //GYM_ID vem por querystring
+                'deleted' => false,
+                'is_active' => true
+            ]
+        ])
+        ->first();
 
-        if (!$customer) {
+        if (!$customer || !(new DefaultPasswordHasher)->check($this->request->data('password'), $customer->password)) {
             throw new UnauthorizedException('Invalid username or password');
         }
-        $this->Auth->setUser($customer);
 
-        $pushRegid = $this->request->data('push_reg_id');
-        $platform = $this->request->data('platform');
-
-        if (!$this->request->data('push_reg_id')) {
-            throw new Exception("Você deve informar o push_reg_id");
-        }
-
-        $customerUpdate = $this->Customers->get($this->Auth->user('id'), [
-            'fields' => ['id', 'name', 'email', 'gym_id']
-        ]);
-
-        $customerUpdate = $this->Customers->patchEntity($customerUpdate,
-          $this->request->data,
-          ['fieldList' => ['platform', 'push_reg_id']]
-        );
-
-        if (!$this->Customers->save($customerUpdate)) {
-            throw new Exception(json_encode($customerUpdate->errors()));
-        }
+        $customer->sub = $customer->id;
+        unset($customer->password);
 
         $this->set([
             'message' => [
-                'user' => ['name' => $customerUpdate->name],
-                'token' => JWT::encode($customerUpdate, Security::salt())
+                'user' => ['name' => $customer->name],
+                'token' => JWT::encode($customer->toArray(), Security::salt())
             ]
         ]);
         $this->set('_serialize', ['message']);

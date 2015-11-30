@@ -18,11 +18,17 @@ class RegIdsController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        //$this->Auth->allow('add');
+        //$this->Auth->allow(['add']);
+        echo 'agulha';
+        print_r($this->Auth->user());
+        exit();
     }
 
     public function add()
     {
+        echo 'aqui';
+        print_r($this->Auth->user());
+        exit();
         $message = ['message' => 'Erro', 'code' => 400];
 
         if ($this->request->is('post')) {
@@ -34,9 +40,6 @@ class RegIdsController extends AppController
              * tb nao tem problema pois a logica é essa, seria como uma nova pessoa logando
              * com outro id no mesmo device.
              */
-            echo 'aqui';
-            print_r($this->Auth->user());
-            exit();
             $this->request->data['customer_id'] = $this->Auth->user('id');
 
             $regid = $this->RegIds->find('all', [

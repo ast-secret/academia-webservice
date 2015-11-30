@@ -63,20 +63,21 @@ class AppController extends Controller
         $this->loadComponent('Flash');
 
         $this->loadComponent('Auth', [
+            'storage' => 'Memory',
             'authenticate' => [
-                'Form' => [
-                    'userModel' => 'Customers',
-                    'scope' => [
-                        'is_active' => 1,
-                        'deleted' => 0,
-                        'gym_id' => (int)$this->request->query('gym_id')
-                    ],
-                    'fields' => [
-                        'username' => 'email'
-                    ]
-                ],
+                // 'Form' => [
+                //     'userModel' => 'Customers',
+                //     'scope' => [
+                //         'is_active' => 1,
+                //         'deleted' => 0,
+                //         'gym_id' => (int)$this->request->query('gym_id')
+                //     ],
+                //     'fields' => [
+                //         'username' => 'email'
+                //     ]
+                // ],
                 'ADmad/JwtAuth.Jwt' => [
-                    'storage' => 'Memory',
+                    
                     'userModel' => 'Customers',
                     'scope' => [
                         'is_active' => true,
@@ -89,7 +90,8 @@ class AppController extends Controller
                 ],
             ],
             // 'checkAuthIn' => 'Controller.initialize',
-            'unauthorizedRedirect' => false
+            'unauthorizedRedirect' => false,
+            // 'checkAuthIn' => 'Controller.initialize',
         ]);
 
     }
