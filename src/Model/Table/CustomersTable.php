@@ -42,6 +42,9 @@ class CustomersTable extends Table
         $this->hasMany('Suggestions', [
             'foreignKey' => 'customer_id'
         ]);
+        $this->hasMany('RegIds', [
+            'foreignKey' => 'customer_id'
+        ]);
     }
 
     /**

@@ -63,8 +63,6 @@ class AppController extends Controller
         $this->loadComponent('Flash');
 
         $this->loadComponent('Auth', [
-            'storage' => 'Memory',
-            'authorize' => 'Controller',
             'authenticate' => [
                 'Form' => [
                     'userModel' => 'Customers',
@@ -78,16 +76,20 @@ class AppController extends Controller
                     ]
                 ],
                 'ADmad/JwtAuth.Jwt' => [
-                    'parameter' => '_token',
+                    'storage' => 'Memory',
                     'userModel' => 'Customers',
                     'scope' => [
-                        'is_active' => 1,
-                        'deleted' => 0
+                        'is_active' => true,
+                        'deleted' => false
                     ],
+                    'fields' => [
+                        'username' => 'id'
+                    ],
+                    'queryDatasource' => true,
                 ],
             ],
-            'unauthorizedRedirect' => false,
             // 'checkAuthIn' => 'Controller.initialize',
+            'unauthorizedRedirect' => false
         ]);
 
     }
@@ -95,10 +97,4 @@ class AppController extends Controller
     public function beforeFilter(Event $event)
     {
     }
-
-    public function isAuthorized($user = null)
-    {
-        return true;
-    }
-
 }

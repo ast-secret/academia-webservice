@@ -7,7 +7,7 @@ use Cake\Event\Event;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Utility\Security;
 use Cake\Network\Exception\BadRequestException;
-use JWT;
+use Firebase\JWT\JWT;
 
 use Cake\Auth\DefaultPasswordHasher;
 

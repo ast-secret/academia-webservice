@@ -4,17 +4,19 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Regid Entity.
+ * RegId Entity.
  *
  * @property int $id
- * @property string $uuid
- * @property string $regid
+ * @property string $device_uuid
+ * @property string $device_regid
  * @property string $platform
+ * @property \Cake\I18n\Time $created
  * @property int $gym_id
  * @property \App\Model\Entity\Gym $gym
- * @property \Cake\I18n\Time $created
+ * @property int $customer_id
+ * @property \App\Model\Entity\Customer $customer
  */
-class Regid extends Entity
+class RegId extends Entity
 {
 
     /**

@@ -1,18 +1,19 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\Regid;
+use App\Model\Entity\RegId;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Regids Model
+ * RegIds Model
  *
  * @property \Cake\ORM\Association\BelongsTo $Gyms
+ * @property \Cake\ORM\Association\BelongsTo $Customers
  */
-class RegidsTable extends Table
+class RegIdsTable extends Table
 {
 
     /**
@@ -25,7 +26,7 @@ class RegidsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('regids');
+        $this->table('reg_ids');
         $this->displayField('id');
         $this->primaryKey('id');
 
@@ -34,6 +35,9 @@ class RegidsTable extends Table
         $this->belongsTo('Gyms', [
             'foreignKey' => 'gym_id',
             'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Customers', [
+            'foreignKey' => 'customer_id'
         ]);
     }
 
@@ -50,12 +54,12 @@ class RegidsTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->requirePresence('uuid', 'create')
-            ->notEmpty('uuid');
+            ->requirePresence('device_uuid', 'create')
+            ->notEmpty('device_uuid');
 
         $validator
-            ->requirePresence('regid', 'create')
-            ->notEmpty('regid');
+            ->requirePresence('device_regid', 'create')
+            ->notEmpty('device_regid');
 
         $validator
             ->requirePresence('platform', 'create')
@@ -74,6 +78,7 @@ class RegidsTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['gym_id'], 'Gyms'));
+        $rules->add($rules->existsIn(['customer_id'], 'Customers'));
         return $rules;
     }
 }

@@ -51,7 +51,7 @@ Router::scope('/customers', function ($routes) {
 });
 Router::scope('/regid', function ($routes) {
     $routes->extensions(['json']);
-    $routes->connect('/add', ['controller' => 'Regids', 'action' => 'add']);
+    $routes->connect('/add', ['controller' => 'RegIds', 'action' => 'add']);
 });
 Router::scope('/', function ($routes) {
     /**

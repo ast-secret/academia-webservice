@@ -1,14 +1,14 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\RegidsTable;
+use App\Model\Table\RegIdsTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\RegidsTable Test Case
+ * App\Model\Table\RegIdsTable Test Case
  */
-class RegidsTableTest extends TestCase
+class RegIdsTableTest extends TestCase
 {
 
     /**
@@ -17,7 +17,7 @@ class RegidsTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.regids',
+        'app.reg_ids',
         'app.gyms',
         'app.customers',
         'app.cards',
@@ -41,8 +41,8 @@ class RegidsTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('Regids') ? [] : ['className' => 'App\Model\Table\RegidsTable'];
-        $this->Regids = TableRegistry::get('Regids', $config);
+        $config = TableRegistry::exists('RegIds') ? [] : ['className' => 'App\Model\Table\RegIdsTable'];
+        $this->RegIds = TableRegistry::get('RegIds', $config);
     }
 
     /**
@@ -52,7 +52,7 @@ class RegidsTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->Regids);
+        unset($this->RegIds);
 
         parent::tearDown();
     }
